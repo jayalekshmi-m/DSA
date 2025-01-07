@@ -1,57 +1,72 @@
-#include <stdio.h>
-#include <stdlib.h>
-int MAX = 10, rear = -1, front = -1;
-int a[10];
-void Enqueue(int n)
+#include<stdio.h>
+#define MAX 100
+
+void bfs(int graph[][MAX],int num)
 {
-    int val;
-    
-    if (rear == MAX - 1)
-        return;
-    if (rear == -1)
-            front = 0;
-    rear++;
-    a[rear] = n;
+    int visited[num],queue[num];
+    int front=0,rear=0,i;
+    for(i=0;i<num;i++)
+    {
+    visited[i]=0;
     }
+    int start=0;
+    visited[start]=1;
+    queue[rear++]=start;
+    printf("BFS Traversal:\n");
+    while(front<rear)
+    {
+        int current=queue[front++];
+        printf("%d\t",current);
 
-
-int Dequeue()
-{
-    if (front == -1)
-        return -1;
-    int v = a[front];
-    front++;
-    return v;
-
+        for(i=0;i<num;i++)
+        {
+            if(graph[current][i]==1 && visited[i]==0)
+            {
+                queue[rear++]=i;
+                visited[i]=1;
+            }
+        }
+    }
+    printf("\n");
+    printf("adjacency matrix:\n");
+    for(i=0;i<num;i++)
+    {
+        for(int j=0;j<num;j++)
+        {
+            printf("%d\t",graph[i][j]);
+        }
+        printf("\n");
+    }
 }
 
 void main()
 {
-    int n, start;
-    printf("Enter number of nodes: ");
-    scanf("%d", &n);
-    int a[n][n], v[n];
-    printf("Enter Adjacency matrix for the graph: ");
-    for (int i = 0; i < n; i++)
+    int num,edges,vertex1,vertex2,i;
+    int graph[MAX][MAX]={0};
+    printf("enter the number of vertices in the graph");
+    scanf("%d",&num);
+    printf("enter the number of edges");
+    scanf("%d",&edges);
+    printf("enter the edges(as pair of vertices,eg.,0,1):\n");
+    for(i=0;i<edges;i++)
     {
-        v[i] = 0;
-        for (int j = 0; j < n; j++)
-            scanf("%d", &a[i][j]);
+        scanf("%d%d",&vertex1,&vertex2);
+        if(vertex1>=num || vertex2>=num || vertex1<0 || vertex2<0)
+        {
+            printf("invalid edge.please enter vertices between 0 and %d",num-1);
+            i--;
+            continue;
+        }
+        if(vertex1==vertex2)
+        {
+            printf("self loops are not allowed.enter different vertices\n");
+            i--;
+            continue;
+        }
+        graph[vertex1][vertex2]=1;
+        graph[vertex2][vertex1]=1;
     }
-    printf("Enter starting node (0-%d): ", (n - 1));
-    scanf("%d", &start);
-    printf("\nBFS Traversal: ");
-    Enqueue(start);
-    v[start]=1;
-    while(front<=rear)
-    {
-        start=Dequeue();
-        printf("%d ",start);
-        for(int i=0; i<n;i++)
-            if(a[start][i]==1 && v[i]==0)
-            {
-                Enqueue(i);
-                v[i]=1;
-            }
-    }
+    bfs(graph,num);
 }
+
+// breadth first search program
